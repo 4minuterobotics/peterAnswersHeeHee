@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const pageContent = document.getElementById("pageContent");
   const form = document.getElementById("answerForm");
   const ghost = document.getElementById("ghost");
+  const scaryImage = document.getElementById("scaryImage");
   const petitionInput = document.getElementById("petition");
   const questionInput = document.getElementById("question");
   const answerDisplay = document.getElementById("answerDisplay");
@@ -122,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let ghostMode = false; // stores the status of the screen (ghost mode, regular mode and traping mode, trapped mode)
   let trappingMode = false; // stores the status of the screen (ghost mode, regular mode and traping mode, trapped mode)
   let trappedMode = false; // stores the status of the screen (ghost mode, regular mode and traping mode, trapped mode)
-  const typingMessage = "Peter please answer the following question.";
+  const typingMessage = "Peter please answer the following question I have about life in today's society";
   const typingMessageArray = typingMessage.split("");
   let messageIndex = 0; // Tracks current character in the typing message
   let timesPlayed = 0; // keeps track of times played. Will reset to 0 every time page refreshes.
@@ -146,12 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ///////////////////////////////////////////////
     if (typingMode == false) {
       //if the space button, a letter, a number, or a symbol (except period) was pressed
-      if (
-        /^[\s]$/.test(key) ||
-        /^[a-zA-Z]$/.test(key) ||
-        /^[0-9]$/.test(key) ||
-        /^[!@#$%^&*()_+\-=[\]{};':"\\|,<>/?`~]$/.test(key)
-      ) {
+      if (/^[\s]$/.test(key) || /^[a-zA-Z]$/.test(key) || /^[0-9]$/.test(key) || /^[!@#$%^&*()_+\-=[\]{};':"\\|,<>/?`~]$/.test(key)) {
         //if the space button, a letter, a number, or a symbol (except period) was pressed
         // //test 1
         //console.log(`You pressed: ${key}`);
@@ -182,12 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } else if (typingMode == true) {
       //if the space button, a letter, a number, or a symbol (except period) was pressed
-      if (
-        /^[\s]$/.test(key) ||
-        /^[a-zA-Z]$/.test(key) ||
-        /^[0-9]$/.test(key) ||
-        /^[!@#$%^&*()_+\-=[\]{};':"\\|,<>/?`~]$/.test(key)
-      ) {
+      if (/^[\s]$/.test(key) || /^[a-zA-Z]$/.test(key) || /^[0-9]$/.test(key) || /^[!@#$%^&*()_+\-=[\]{};':"\\|,<>/?`~]$/.test(key)) {
         //set continuedSpot equal to typedFirst.length  +  answer.length
         //set coverText equal to typingMessage [typedFirst.length] through typingMessage[continuedSpot]
         answer.push(key);
@@ -221,8 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (answer == false) {
         displayedText = typedFirst.join("");
       } else {
-        displayedText =
-          typedFirst.join("") + coverTextArray.join("") + typedLast.join("");
+        displayedText = typedFirst.join("") + coverTextArray.join("") + typedLast.join("");
       }
     } else if (typingMode == true) {
       displayedText = typedFirst.join("") + coverText;
@@ -283,8 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }, 5000);
         }
       } else {
-        answerDisplay.textContent =
-          DOUBTFUL_RESPONSES[Randomizer(0, DOUBTFUL_RESPONSES.length)];
+        answerDisplay.textContent = DOUBTFUL_RESPONSES[Randomizer(0, DOUBTFUL_RESPONSES.length)];
       }
     } else {
       answerDisplay.textContent = "Please enter a question.";
@@ -296,6 +285,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //make the reset button visible
     resetButton.style.visibility = "visible";
+  });
+
+  /////////////////////////////////////////////////////////////////////////
+  //Reset the game using any key on the keyboard vs having to click a button on the screen
+  document.addEventListener("keydown", function (event) {
+    if (ghostMode == true) {
+      ghostMode = false;
+      regularMode = true;
+
+      //reset times answered
+      timesAnswered = 0;
+
+      //reset answer font Size to original size
+      answerFontSize = ORIGINAL_FONT_SIZE;
+      answerDisplay.style.fontSize = `${answerFontSize}px`;
+
+      //reset body and page content background colors
+      body.style.backgroundColor = ORIGINAL_BODY_BACKGROUND;
+      pageContent.style.backgroundColor = ORIGINAL_PAGECONTENT_BACKGROUND;
+
+      // clear the inputs for the next round
+      petitionInput.value = "";
+      questionInput.value = "";
+      answerDisplay.textContent = "";
+
+      //reset all input variables
+      answer = []; // Reset the secret answer
+      typedFirst = [];
+      coverTextArray = [];
+      typedLast = [];
+
+      typingMode = false; // Reset typing mode
+
+      //make form visible again
+      form.style.display = "block";
+      scaryImage.style.display = "block";
+      scaryImage.style.marginLeft = "auto";
+      scaryImage.style.marginRight = "auto";
+      //enable form inputs
+      petitionInput.disabled = false;
+      questionInput.disabled = false;
+
+      //hide reset button
+      resetButton.style.visibility = "hidden"; //hide the visibility button again
+
+      //hide ghost div
+      ghost.style.display = "none";
+
+      //make beeping noise stop
+      trappedNoise.pause(); // Pause the audio
+      trappedNoise.currentTime = 0; // Reset the audio to the beginning
+
+      //make song stop
+      ghostNoise.pause(); // Pause the audio
+      ghostNoise.currentTime = 0; // Reset the audio to the beginning
+
+      //make michael jackon stop
+      heeheeNoise.pause();
+      heeheeNoise.currentTime = 0;
+
+      //play gotEeem noise after first round
+      if (timesPlayed == 1) {
+        timesPlayed++;
+        setTimeout(playGotEeemNoise, 2000);
+
+        function playGotEeemNoise() {
+          gotEeemNoise.play();
+        }
+      }
+      //Set animating dots to false
+      animatingDots = false;
+
+      return;
+    }
   });
 
   // Clear inputs for the next round
@@ -335,7 +398,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         //make form visible again
         form.style.display = "block";
-
+        scaryImage.style.display = "block";
+        scaryImage.style.marginLeft = "auto";
+        scaryImage.style.marginRight = "auto";
         //enable form inputs
         petitionInput.disabled = false;
         questionInput.disabled = false;
@@ -402,11 +467,7 @@ document.addEventListener("DOMContentLoaded", () => {
       resetButton.style.visibility = "hidden"; //hide the visibility button again
 
       //animate scary dots
-      if (
-        answerFontSize < ORIGINAL_FONT_SIZE / 2 &&
-        animatingDots == false &&
-        timesPlayed < 1
-      ) {
+      if (answerFontSize < ORIGINAL_FONT_SIZE / 2 && animatingDots == false && timesPlayed < 1) {
         //animateDots();
       }
     } else if (ghostMode == true && timesPlayed < 1) {
@@ -421,9 +482,12 @@ document.addEventListener("DOMContentLoaded", () => {
         //make form contents dissapear
         form.style.display = "none";
         answerDisplay.style.display = "none";
+        scaryImage.style.display = "none";
+        //make ghost visible
         ghost.style.display = "block";
         ghost.src = "./michaeljackson.webp";
-        ghost.style.width = "80%";
+        ghost.style.width = "100%";
+        //play scary noises
         ghostNoise.play();
         screamNoise.play();
         heeheeNoise.play();
