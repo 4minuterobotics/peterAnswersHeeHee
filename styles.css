@@ -12,6 +12,10 @@ body {
   width: 50%;
 }
 
+#scaryImage {
+  width: 30%;
+}
+
 #ghost {
   display: none;
 }
